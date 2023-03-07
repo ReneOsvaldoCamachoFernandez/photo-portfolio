@@ -51,7 +51,7 @@ export default function Home() {
                 </Tab>
               ))}
             </Tab.List>
-            <Tab.Panels className="bg-stone-900 bg-opacity-75 p-2 sm:p-4 h-full max-w-[900px] w-full my-6">
+            <Tab.Panels className="bg-stone-700 bg-opacity-75 p-2 sm:p-4 h-full max-w-[900px] w-full my-6">
               <Tab.Panel className="">All Photos</Tab.Panel>
               <Tab.Panel>Oceans</Tab.Panel>
               <Tab.Panel>Forest</Tab.Panel>
