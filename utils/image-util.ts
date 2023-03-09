@@ -1,6 +1,6 @@
-import { Photo } from "@/types";
-import { createApi } from "unsplash-js";
+import { HomeProps, Photo } from "@/types";
 import lqip from "lqip-modern";
+import { createApi } from "unsplash-js";
 
 async function getblurDataURL(url: string) {
   const imgData = await fetch(url);
@@ -12,10 +12,12 @@ async function getblurDataURL(url: string) {
 
 export async function getImages(
   client: ReturnType<typeof createApi>,
-  query: string
+  query: string,
+  perPage: number
 ): Promise<Photo[]> {
   const photos = await client.search.getPhotos({
     query: query,
+    perPage: perPage,
   });
 
   ///get the photos from unsplash
@@ -23,6 +25,7 @@ export async function getImages(
   if (photos.type == "success") {
     const photosArr = photos.response.results.map((photo, indx) => ({
       src: photo.urls.full,
+      srcMed: photo.urls.small,
       thumb: photo.urls.thumb,
       width: photo.width,
       height: photo.height,

@@ -4,6 +4,7 @@ export type GalleryProps = {
 
 export type Photo = {
   src: string;
+  srcMed: string;
   thumb: string;
   width: number;
   height: number;

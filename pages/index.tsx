@@ -8,11 +8,11 @@ import bgImage from "../public/photography-bg.jpg";
 
 //////////////////////
 
-import { GetStaticProps } from "next";
 import type { HomeProps, Photo } from "@/types";
-import nodeFetch from "node-fetch";
-import { createApi } from "unsplash-js";
 import { Gallery } from "@/components/Gallery";
+import { GetStaticProps } from "next";
+import { createApi } from "unsplash-js";
+import nodeFetch from "node-fetch";
 import { getImages } from "@/utils/image-util";
 
 const tabs = [
@@ -33,6 +33,8 @@ const tabs = [
 /*steps to set the static charge of the photos*/
 /////////////////////////////////
 
+////////////////////////////////
+
 export const getStaticProps: GetStaticProps<HomeProps> = async () => {
   const unsplash = createApi({
     accessKey: process.env.UNSPLASH_ACCESS_KEY!,
@@ -40,8 +42,8 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
   });
 
   const [oceans, forests] = await Promise.all([
-    getImages(unsplash, "oceans"),
-    getImages(unsplash, "forests"),
+    getImages(unsplash, "oceans", 10),
+    getImages(unsplash, "forests", 10),
   ]);
 
   return Promise.resolve({
@@ -51,7 +53,6 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
     },
   });
 };
-////////////////////////////////
 
 export default function Home({ oceans, forests }: HomeProps) {
   return (
@@ -69,16 +70,15 @@ export default function Home({ oceans, forests }: HomeProps) {
         placeholder="blur"
       />
       <div className="fixed top-0 left-0 w-full h-full from-stone-900 bg-gradient-to-t z-10"></div>
-      <header className="bg-black fixed w-full top-0 z-30 flex justify-between items-center h-[90px] px-10">
+      <header className="bg-black fixed w-full top-0 z-30 flex justify-center lg:justify-between items-center h-[90px] px-10">
         <div>
           <span className="uppercase text-lg font-medium">
             Photography Portfolio
           </span>
         </div>
-
         <Link
           href="#"
-          className="rounded-3xl bg-white text-stone-700 px-3 py-2 hover:bg-opacity-90"
+          className="hidden lg:block rounded-3xl bg-white text-stone-700 px-3 py-2 hover:bg-opacity-90"
         >
           Get in touch
         </Link>
@@ -86,7 +86,7 @@ export default function Home({ oceans, forests }: HomeProps) {
       <main className="pt-[110px] z-20 relative">
         <div className="flex flex-col items-center h-full">
           <Tab.Group>
-            <Tab.List className="flex  items-center gap-20">
+            <Tab.List className="flex items-center gap-5 lg:gap-20">
               {tabs.map((tab) => (
                 <Tab key={tab.key} className="p-2">
                   {({ selected }) => (
@@ -103,13 +103,13 @@ export default function Home({ oceans, forests }: HomeProps) {
               ))}
             </Tab.List>
             <Tab.Panels className="p-2 sm:p-4 h-full max-w-[900px] w-full my-6">
-              <Tab.Panel className="overflow-auto">
+              <Tab.Panel className="overflow-auto mx-5 sm:mx-0">
                 <Gallery photos={[...oceans, ...forests]} />
               </Tab.Panel>
-              <Tab.Panel className="overflow-auto">
+              <Tab.Panel className="overflow-auto mx-5 sm:mx-0">
                 <Gallery photos={oceans} />
               </Tab.Panel>
-              <Tab.Panel className="overflow-auto">
+              <Tab.Panel className="overflow-auto mx-5 sm:mx-0">
                 <Gallery photos={forests} />
               </Tab.Panel>
             </Tab.Panels>

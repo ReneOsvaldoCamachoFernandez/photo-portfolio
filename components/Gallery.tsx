@@ -17,34 +17,29 @@ import "lightgallery/css/lg-thumbnail.css";
 import lgThumbnail from "lightgallery/plugins/thumbnail";
 import lgZoom from "lightgallery/plugins/zoom";
 
-////////////////////////
-//UNSPLASH
-////////////////////////
-import { createApi } from "unsplash-js";
-import lqip from "lqip-modern";
-///////////////////////
-
 export function Gallery({ photos }: GalleryProps) {
   const ligthboxRef = useRef<LightGallery | null>(null);
 
   return (
     <>
-      <Masonry breakpointCols={3} className="flex gap-4" columnClassName="">
+      <Masonry
+        breakpointCols={{ default: 1, 640: 1, 768: 2, 1024: 3, 1280: 3 }}
+        className="flex gap-4"
+        columnClassName=""
+      >
         {photos.map((photo, indx) => (
-          <div key={indx} className="relative">
+          <div key={indx} className="relative rounded-md">
             <Image
-              key={photo.src}
-              src={photo.src}
+              src={photo.srcMed}
               width={photo.width}
               height={photo.height}
-              className="my-4 "
+              className="my-4 rounded-md"
               alt={photo.alt}
               placeholder="blur"
               blurDataURL={photo.blurDataURL}
             />
             <div
-              key={indx}
-              className="absolute w-full h-full inset-0 bg-transparent hover:bg-stone-900 hover:bg-opacity-50 hover: cursor-pointer"
+              className="absolute rounded-md w-full h-full inset-0 bg-transparent hover:bg-stone-900 hover:bg-opacity-50 cursor-pointer hover:border-2 hover:border-cyan-100"
               onClick={() => {
                 ligthboxRef.current?.openGallery(indx);
               }}
