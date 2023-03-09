@@ -16,22 +16,25 @@ How to run the project locally
 
     Clone the repository:
 
-bash
+```bash
 
 git clone https://github.com/your-username/photo-portfolio.git
+```
 
     Install dependencies:
 
-bash
+```bash
 
 cd photo-portfolio
 npm install
+```
 
     Start the development server:
 
-bash
+```bash
 
 npm run dev
+```
 
     Open http://localhost:3000 to view the website in the browser.
 
