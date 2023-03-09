@@ -3,6 +3,7 @@ Photo Portfolio
 This is a photo portfolio website, showcasing a selection of beautiful photographs taken by talented photographers from around the world. The website is built using modern web technologies like ReactJS, NextJS, and TailwindCSS.
 
 Live demo of the website can be accessed here: https://photo-portfolio-nu.vercel.app/
+
 Features
 
     Responsive design
