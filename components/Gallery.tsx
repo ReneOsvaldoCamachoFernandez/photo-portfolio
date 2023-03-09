@@ -23,9 +23,8 @@ export function Gallery({ photos }: GalleryProps) {
   return (
     <>
       <Masonry
-        breakpointCols={{ default: 1, 640: 1, 768: 2, 1024: 3, 1280: 3 }}
+        breakpointCols={{ default: 4, 1280: 3, 1024: 3, 768: 2, 640: 1 }}
         className="flex gap-4"
-        columnClassName=""
       >
         {photos.map((photo, indx) => (
           <div key={indx} className="relative rounded-md">
