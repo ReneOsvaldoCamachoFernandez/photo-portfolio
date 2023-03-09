@@ -6,48 +6,14 @@ import classNames from "classnames";
 import Image from "next/image";
 import bgImage from "../public/photography-bg.jpg";
 
-////////////////////////
-//LIGTHGALLERY
-////////////////////////
-import type { LightGallery } from "lightgallery/lightgallery";
-import LightGalleryComponent from "lightgallery/react";
-
-// import styles
-import "lightgallery/css/lightgallery.css";
-import "lightgallery/css/lg-zoom.css";
-import "lightgallery/css/lg-thumbnail.css";
-
-// import plugins if you need
-import lgThumbnail from "lightgallery/plugins/thumbnail";
-import lgZoom from "lightgallery/plugins/zoom";
-
 //////////////////////
 
-import { useRef } from "react";
 import { GetStaticProps } from "next";
-
-////////////////////////
-//UNSPLASH
-////////////////////////
-import { createApi } from "unsplash-js";
+import type { HomeProps, Photo } from "@/types";
 import nodeFetch from "node-fetch";
-import lqip from "lqip-modern";
-
-type Photo = {
-  src: string;
-  thumb: string;
-  width: number;
-  height: number;
-  alt: string;
-  blurDataURL: string;
-};
-
-//type CreateApi = ReturnType<typeof createApi>;
-//type SearchPhotos = CreateApi["search"];
-//type GetPhotos = SearchPhotos["getPhotos"];
-//type PhotoResponse = Awaited<ReturnType<GetPhotos>>;
-
-///////////////////////
+import { createApi } from "unsplash-js";
+import { Gallery } from "@/components/Gallery";
+import { getImages } from "@/utils/image-util";
 
 const tabs = [
   {
@@ -67,24 +33,21 @@ const tabs = [
 /*steps to set the static charge of the photos*/
 /////////////////////////////////
 
-type HomeProps = {
-  oceans: Photo[];
-  forests: Photo[];
-};
-
 export const getStaticProps: GetStaticProps<HomeProps> = async () => {
   const unsplash = createApi({
     accessKey: process.env.UNSPLASH_ACCESS_KEY!,
     fetch: nodeFetch as unknown as typeof fetch,
   });
 
-  const mappedOceans = await getImages(unsplash, "oceans");
-  const mappedForests = await getImages(unsplash, "forests");
+  const [oceans, forests] = await Promise.all([
+    getImages(unsplash, "oceans"),
+    getImages(unsplash, "forests"),
+  ]);
 
   return Promise.resolve({
     props: {
-      oceans: mappedOceans,
-      forests: mappedForests,
+      oceans,
+      forests,
     },
   });
 };
@@ -104,7 +67,6 @@ export default function Home({ oceans, forests }: HomeProps) {
         src={bgImage}
         alt="bg placeholder"
         placeholder="blur"
-        priority={true}
       />
       <div className="fixed top-0 left-0 w-full h-full from-stone-900 bg-gradient-to-t z-10"></div>
       <header className="bg-black fixed w-full top-0 z-30 flex justify-between items-center h-[90px] px-10">
@@ -159,88 +121,4 @@ export default function Home({ oceans, forests }: HomeProps) {
       </footer>
     </div>
   );
-}
-
-type GalleryProps = {
-  photos: Photo[];
-};
-
-function Gallery({ photos }: GalleryProps) {
-  const ligthboxRef = useRef<LightGallery | null>(null);
-
-  return (
-    <>
-      <Masonry breakpointCols={2} className="flex gap-4" columnClassName="">
-        {photos.map((photo, indx) => (
-          <Image
-            key={photo.src}
-            src={photo.src}
-            width={photo.width}
-            height={photo.height}
-            className="my-4 hover:opacity-70 cursor-pointer"
-            alt={photo.alt}
-            placeholder="blur"
-            blurDataURL={photo.blurDataURL}
-            onClick={() => {
-              ligthboxRef.current?.openGallery(indx);
-            }}
-          />
-        ))}
-      </Masonry>
-      <LightGalleryComponent
-        onInit={(ref) => {
-          if (ref) ligthboxRef.current = ref.instance;
-        }}
-        speed={500}
-        plugins={[lgThumbnail, lgZoom]}
-        dynamic={true}
-        dynamicEl={photos.map((photo) => ({
-          src: photo.src,
-          thumb: photo.thumb,
-        }))}
-      ></LightGalleryComponent>
-    </>
-  );
-}
-
-async function getImages(
-  client: ReturnType<typeof createApi>,
-  query: string
-): Promise<Photo[]> {
-  const photos = await client.search.getPhotos({
-    query: query,
-  });
-
-  ///get the photos from unsplash
-  const mappedPhotos: Photo[] = [];
-  if (photos.type == "success") {
-    const photosArr = photos.response.results.map((photo, indx) => ({
-      src: photo.urls.full,
-      thumb: photo.urls.thumb,
-      width: photo.width,
-      height: photo.height,
-      alt: photo.alt_description ?? `img-${indx}`,
-    }));
-
-    const photosArrWBlur: Photo[] = [];
-
-    for (const photo of photosArr) {
-      const blurDataURL = await getblurDataURL(photo.src);
-      photosArrWBlur.push({ ...photo, blurDataURL });
-    }
-
-    mappedPhotos.push(...photosArrWBlur);
-  } else {
-    console.error("could not get photos");
-  }
-
-  return mappedPhotos;
-}
-
-async function getblurDataURL(url: string) {
-  const imgData = await fetch(url);
-  const arrayBufferData = await imgData.arrayBuffer();
-  const lqipData = await lqip(Buffer.from(arrayBufferData));
-
-  return lqipData.metadata.dataURIBase64;
 }
