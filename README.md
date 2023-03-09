@@ -21,7 +21,7 @@ How to run the project locally
 git clone https://github.com/your-username/photo-portfolio.git
 ```
 
-    Install dependencies:
+Install dependencies:
 
 ```bash
 
